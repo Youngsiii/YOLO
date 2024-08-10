@@ -70,7 +70,7 @@ class VOCDataset(torch.utils.data.Dataset):
 
             # If no object already found for specific cell i,j
             # Note: This means we restrict to ONE object per cell
-            if label_matrix[j, i, 20] == 0:
+            if label_matrix[j, i, 20] == 0:   # 第一个S维度实际是对应y轴cell，第二个S维度是对应x轴cell，这一点可以从convert_cellboxes这个函数的x_cell_indice和y_cell_indice构造中看出来
                 # Set that there exists an object
                 label_matrix[j, i, 20] = 1
 
@@ -79,7 +79,7 @@ class VOCDataset(torch.utils.data.Dataset):
                 label_matrix[j, i, 22:23] = y_cell
                 label_matrix[j, i, 23:24] = width_cell
                 label_matrix[j, i ,24:25] = height_cell
-                # label_matrix[i, j, 21:25] = torch.tensor([x_cell, y_cell, width_cell, height_cell])
+                # label_matrix[j, i, 21:25] = torch.tensor([x_cell, y_cell, width_cell, height_cell])
 
                 # Set one hot encoding for class_label
                 label_matrix[j, i, class_label] = 1
