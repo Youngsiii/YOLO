@@ -70,33 +70,23 @@ class VOCDataset(torch.utils.data.Dataset):
 
             # If no object already found for specific cell i,j
             # Note: This means we restrict to ONE object per cell
-            if label_matrix[i, j, 20] == 0:
+            if label_matrix[j, i, 20] == 0:
                 # Set that there exists an object
-                label_matrix[i, j, 20] = 1
+                label_matrix[j, i, 20] = 1
 
                 # Box coordinates
-                label_matrix[i, j, 21:22] = x_cell
-                label_matrix[i, j, 22:23] = y_cell
-                label_matrix[i, j, 23:24] = width_cell
-                label_matrix[i, j ,24:25] = height_cell
+                label_matrix[j, i, 21:22] = x_cell
+                label_matrix[j, i, 22:23] = y_cell
+                label_matrix[j, i, 23:24] = width_cell
+                label_matrix[j, i ,24:25] = height_cell
                 # label_matrix[i, j, 21:25] = torch.tensor([x_cell, y_cell, width_cell, height_cell])
 
                 # Set one hot encoding for class_label
-                label_matrix[i, j, class_label] = 1
+                label_matrix[j, i, class_label] = 1
                 # label_matrix:(S, S, 30)
                 # [0-19:class_label, 20:obj_conf, 21-24:[x_cell, y_cell, width_cell, height_cell], 25-29:[0,0,0,0,0]]
 
             return image, label_matrix
-
-
-if __name__ == "__main__":
-    transform = transforms.Compose([transforms.Resize((448, 448)), transforms.ToTensor()])
-    train_set = VOCDataset(r'F:\Pycharm\pycharm_project_2\my_yolo\VOC\8examples.csv',
-                           r'F:\Pycharm\pycharm_project_2\my_yolo\VOC\images',r'F:\Pycharm\pycharm_project_2\my_yolo\VOC\labels',transform=transform)
-    image, label = train_set[1]  # image:(3, 448, 448)
-    image = image.permute(1, 2, 0).numpy()  # (3, 448, 448) -> (448, 488, 3), Tensor->Numpy
-    plt.imshow(image)  # plt可以用来直接显示张量图片(可能还需要.clamp(0, 1)将张量值转换到0-1之间，但此处使用了ToTensor()已转换张量值到0-1之间)，不过最好先转换为numpy形式
-    plt.show()
 
 
 
